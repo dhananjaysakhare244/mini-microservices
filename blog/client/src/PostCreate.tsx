@@ -4,7 +4,7 @@ import axios from "axios";
 const PostCreate = () => {
   const [title, setTitle] = useState("");
 
-  const onSubmit = async (event) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     await axios.post("http://localhost:4000/posts", {
@@ -16,7 +16,7 @@ const PostCreate = () => {
 
   return (
     <div>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={(e) => onSubmit(e)}>
         <div className="form-group">
           <label>Title</label>
           <input

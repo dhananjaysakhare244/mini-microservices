@@ -1,6 +1,14 @@
-import React from "react";
+import React, { FC } from "react";
 
-const CommentList = ({ comments }) => {
+export interface IComments {
+  id: string;
+  status: string;
+  content: string;
+}
+type Props = {
+  comments: IComments[];
+};
+const CommentList: FC<Props> = ({ comments }) => {
   const renderedComments = comments.map((comment) => {
     let content;
     if (comment.status === "approved") {

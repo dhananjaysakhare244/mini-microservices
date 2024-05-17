@@ -7,26 +7,26 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const posts = {};
+const posts = [];
 
 const handleEvent = (type, data) => {
   if (type === "PostCreated") {
     const { id, title } = data;
 
-    posts[id] = { id, title, comments: [] };
+    posts.push({ id, title, comments: [] });
   }
 
   if (type === "CommentCreated") {
     const { id, content, postId, status } = data;
 
-    const post = posts[postId];
+    const post = posts.find((post) => post.id === postId);
     post.comments.push({ id, content, status });
   }
 
   if (type === "CommentUpdated") {
     const { id, content, postId, status } = data;
 
-    const post = posts[postId];
+    const post = posts.find((post) => post.id === postId);
     const comment = post.comments.find((comment) => {
       return comment.id === id;
     });

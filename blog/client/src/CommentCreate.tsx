@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import axios from "axios";
 
-const CommentCreate = ({ postId }) => {
+type Props = {
+  postId: string;
+};
+const CommentCreate: FC<Props> = ({ postId }) => {
   const [content, setContent] = useState("");
 
-  const onSubmit = async (event) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     await axios.post(`http://localhost:4001/posts/${postId}/comments`, {
@@ -16,7 +19,7 @@ const CommentCreate = ({ postId }) => {
 
   return (
     <div>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={(e) => onSubmit(e)}>
         <div className="form-group">
           <label>New Comment</label>
           <input
