@@ -23,7 +23,7 @@ interface ReqBody {
   type: string;
   data: ICommentByPostId;
 }
-const commentsByPostId: ICommentByPostId[] = [];
+let commentsByPostId: ICommentByPostId[] = [];
 
 app.get(
   "/posts/:id/comments",
@@ -35,25 +35,21 @@ app.get(
 app.post(
   "/posts/:id/comments",
   async (req: Request<Params, {}, ReqBody, {}>, res: Response) => {
-    const commentId = randomBytes(4).toString("hex");
+    const commentId: string = randomBytes(4).toString("hex");
 
     const { content } = req.body;
     const comments = commentsByPostId.find((c) => c.id === req.params.id) || [];
-    commentsByPostId.push({
+    const newComment: ICommentByPostId = {
       id: commentId,
       content,
       status: "pending",
       postId: req.params.id,
-    });
+    };
+    commentsByPostId = [...commentsByPostId, newComment];
 
     await axios.post("http://localhost:4005/events", {
       type: "CommentCreated",
-      data: {
-        id: commentId,
-        content,
-        postId: req.params.id,
-        status: "pending",
-      },
+      data: newComment,
     });
     res.status(201).send(comments);
   }
@@ -65,17 +61,13 @@ app.post(
     console.log("Event", req.body.type);
     const { type, data } = req.body;
     if (type === "CommentModerated") {
-      const { postId, id, status, content } = data;
-      const comment = commentsByPostId.find((cmt) => cmt.postId === postId);
-      if (comment) comment.status = status;
+      const comment = commentsByPostId.find(
+        (cmt) => cmt.postId === data.postId
+      );
+      if (comment) comment.status = data.status;
       await axios.post("http://localhost:4005/events", {
         type: "CommentUpdated",
-        data: {
-          id,
-          status,
-          postId,
-          content,
-        },
+        data,
       });
     }
     res.send({});

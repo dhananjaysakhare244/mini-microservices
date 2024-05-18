@@ -41,7 +41,7 @@ app.post("/events", (req: Request<{}, {}, ReqBody, {}>, res: Response) => {
   res.send({ status: "OK" });
 });
 
-app.get("/events", (req: Request<{}, {}, ReqBody, {}>, res: Response) => {
+app.get("/events", (_: any, res: Response) => {
   res.send(events);
 });
 

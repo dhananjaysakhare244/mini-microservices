@@ -28,7 +28,7 @@ interface IPost {
 }
 const posts: IPost[] = [];
 
-app.get("/posts", (req: Request<{}, {}, {}, {}>, res: Response) => {
+app.get("/posts", (_: any, res: Response) => {
   res.send(posts);
 });
 
