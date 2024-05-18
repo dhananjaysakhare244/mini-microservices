@@ -1,2 +1,3 @@
 blog/comments/src/index.js
 blog/event-bus/src/index.js
+blog/moderation/src/index.js
