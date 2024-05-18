@@ -24,6 +24,7 @@ interface ReqBody {
 interface IPost {
   id: string;
   title: string;
+  comments?: ICommentByPostId[];
 }
 const posts: IPost[] = [];
 

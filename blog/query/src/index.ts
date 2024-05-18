@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -7,40 +9,63 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const posts = [];
+interface ICommentByPostId {
+  id: string;
+  content: string;
+  status: string;
+  postId: string;
+}
+interface ReqBody {
+  content: string;
+  type: string;
+  data: ICommentByPostId;
+}
 
-const handleEvent = (type, data) => {
+interface IPost {
+  id: string;
+  title: string;
+  comments: ICommentByPostId[];
+}
+interface ICommentByPostId {
+  id: string;
+  content: string;
+  status: string;
+  postId: string;
+}
+const posts: IPost[] = [];
+
+const handleEvent = (type: string, data: IPost | ICommentByPostId) => {
   if (type === "PostCreated") {
-    const { id, title } = data;
+    const { id, title } = data as IPost;
 
     posts.push({ id, title, comments: [] });
   }
 
   if (type === "CommentCreated") {
-    const { id, content, postId, status } = data;
+    const { id, content, postId, status } = data as ICommentByPostId;
 
     const post = posts.find((post) => post.id === postId);
-    post.comments.push({ id, content, status, postId });
+    if (post) post.comments.push({ id, content, status, postId });
   }
 
   if (type === "CommentUpdated") {
-    const { id, content, postId, status } = data;
+    const { id, content, postId, status } = data as ICommentByPostId;
 
-    const post = posts.find((post) => post.id === postId);
+    const post = posts.find((post) => post.id === postId)!;
     const comment = post.comments.find((comment) => {
       return comment.id === id;
-    });
+    })!;
 
     comment.status = status;
     comment.content = content;
   }
 };
 
-app.get("/posts", (req, res) => {
+app.get("/posts", (req: Request<{}, {}, {}, {}>, res: Response) => {
   res.send(posts);
 });
 
-app.post("/events", (req, res) => {
+app.post("/events", (req: Request<{}, {}, ReqBody, {}>, res: Response) => {
   const { type, data } = req.body;
 
   handleEvent(type, data);
@@ -58,7 +83,7 @@ app.listen(4002, async () => {
 
       handleEvent(event.type, event.data);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error.message);
   }
 });
