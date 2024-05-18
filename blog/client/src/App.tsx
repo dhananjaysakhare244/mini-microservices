@@ -1,6 +1,5 @@
 import React from "react";
 import PostCreate from "./PostCreate";
-// @ts-ignore
 import PostList from "./PostList";
 
 export const App = () => {
